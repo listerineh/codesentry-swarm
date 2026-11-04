@@ -103,6 +103,14 @@ Todos viven en código y tienen tests:
 - **Reintentos con backoff y dead letter**, en Pub/Sub y en el bus local.
 - **Sin escritura automática:** comenta en el PR, nunca hace push. El merge es humano.
 
+## Demo en vivo sobre lo desplegado
+
+```bash
+./scripts/open-demo-pr.sh
+```
+
+Abre un PR nuevo en [codesentry-demo-shop](https://github.com/listerineh/codesentry-demo-shop) y el enjambre comenta en unos 2 o 3 minutos. `./scripts/demo-status.sh PROYECTO` muestra comentarios, ejecuciones y errores, y `./scripts/open-escape-pr.sh` prueba el sandbox desde dentro. Para publicar un commit nuevo usa `./scripts/redeploy.sh PROYECTO`.
+
 ## Limitaciones
 
 - Verde es evidencia, no prueba. Un test malicioso puede fingir ciertos resultados, por eso `gate()` exige tests ejecutados y una persona revisa.

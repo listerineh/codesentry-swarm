@@ -2,6 +2,23 @@
 
 Revisado el 3 de noviembre de 2026 en documentación oficial. Repásalo la semana del evento: varios puntos cambian rápido.
 
+## Medido en el despliegue real (4 de noviembre de 2026)
+
+Proyecto `codesentry-swarm`, `us-central1`, con Gemini real y Cloud Run sandboxes:
+
+- **PR de ejemplo:** [#2](https://github.com/listerineh/codesentry-demo-shop/pull/2) resuelto en 1 iteración y 2 min 22 s, con 5 tests pasando, 1529 tokens de entrada y 4001 de salida, 0,016 USD.
+- **Arranque en frío:** la primera ejecución del job tardó 1 min 32 s en iniciar. Lanza un PR antes de empezar la demo para no esperarlo en el escenario.
+- **Prueba de escape:** con `scripts/open-escape-pr.sh`, desde dentro del sandbox `169.254.169.254` y `metadata.google.internal` dieron `Network is unreachable`, internet no resolvió DNS, y no se vieron las URLs firmadas ni variables con credenciales.
+- **Modelo real:** acertó a la primera, así que el rojo intermedio del replay no siempre aparece en vivo.
+
+Tropiezos del primer despliegue, ya corregidos en este repo:
+
+- El agente de Cloud Storage no existe hasta el primer uso: Terraform lo crea con `google_storage_project_service_account`.
+- El agente de Eventarc tarda en recibir permisos: el trigger dio 403 y pasó al reintentar.
+- `gcloud` 570 no reconoce `--sandbox-launcher` en jobs ni en YAML: `scripts/enable-sandbox.py` usa la API directa.
+- Un cliente gRPC async pertenece al event loop que lo crea: hay que construirlo dentro de la petición.
+- `terraform apply` sobre el job borra `sandboxLauncher`: `scripts/redeploy.sh` lo reactiva.
+
 ## Correcciones al plan original
 
 | El plan decía | Lo que dicen hoy las fuentes | Qué hace este repo |

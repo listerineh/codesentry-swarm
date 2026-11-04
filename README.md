@@ -126,6 +126,14 @@ Review the plan with `tflint` and `trivy` before applying it. Then:
 
 Platform decisions and their sources are in [docs/verified-facts.md](docs/verified-facts.md). That page is dated: Google Cloud names, models and limits change quickly.
 
+## Live demo on the deployed stack
+
+```bash
+./scripts/open-demo-pr.sh
+```
+
+Opens a fresh pull request on [codesentry-demo-shop](https://github.com/listerineh/codesentry-demo-shop); the swarm comments on it in about 2 to 3 minutes. `./scripts/demo-status.sh PROJECT_ID` shows comments, job runs and errors, and `./scripts/open-escape-pr.sh` probes the sandbox from the inside. To ship a new commit, use `./scripts/redeploy.sh PROJECT_ID`.
+
 ## Limitations
 
 - Green is evidence, not proof. Malicious test code can fake some results, which is why `gate()` requires tests to have run and a person reviews the fix.
