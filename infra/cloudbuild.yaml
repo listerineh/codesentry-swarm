@@ -1,0 +1,9 @@
+# Builds both images. _TAG pins what Terraform deploys.
+steps:
+  - name: gcr.io/cloud-builders/docker
+    args: ["build", "-t", "${_REPO}/api:${_TAG}", "."]
+  - name: gcr.io/cloud-builders/docker
+    args: ["build", "-f", "Dockerfile.sandbox", "-t", "${_REPO}/sandbox:${_TAG}", "."]
+images:
+  - ${_REPO}/api:${_TAG}
+  - ${_REPO}/sandbox:${_TAG}

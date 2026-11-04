@@ -1,0 +1,11 @@
+# Where code under test runs: Python, pytest and two standard-library scripts. No SDKs, no credentials, nothing else.
+FROM python:3.12.11-slim-bookworm AS build
+RUN pip install --no-cache-dir --prefix=/install pytest==9.2.0
+
+FROM python:3.12.11-slim-bookworm
+COPY --from=build /install /usr/local
+COPY src/codesentry/sandbox_entry.py src/codesentry/job_main.py /app/
+RUN useradd --uid 65532 --no-create-home sandbox
+USER 65532
+# Local Docker passes the bundle on stdin. The Cloud Run Job overrides this with job_main.py.
+ENTRYPOINT ["python3", "/app/sandbox_entry.py"]

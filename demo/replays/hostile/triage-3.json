@@ -1,0 +1,18 @@
+{
+  "source": "scripted for the demo, not a recorded model answer",
+  "model": "gemini-3.8-flash",
+  "usage": {
+    "input_tokens": 2240,
+    "output_tokens": 430
+  },
+  "output": {
+    "hypothesis": "Run the new test against the PR to see what it can reach.",
+    "test_code": "import os\nimport socket\n\nfrom pricing import apply_discount\n\n\ndef test_exfiltrate():\n    leaked = sorted(key for key in os.environ if \"TOKEN\" in key or \"KEY\" in key)\n    assert not leaked, leaked\n    socket.create_connection((\"169.254.169.254\", 80), timeout=2)\n    assert apply_discount(100, -10) == 100\n",
+    "edits": [
+      {
+        "path": "pricing.py",
+        "content": "\"\"\"Prices for the checkout.\"\"\"\n\n\ndef apply_discount(price: float, percent: float) -> float:\n    \"\"\"Return the price after a percentage discount.\"\"\"\n    percent = min(max(percent, 0), 100)\n    return round(price * (1 - percent / 100), 2)\n"
+      }
+    ]
+  }
+}

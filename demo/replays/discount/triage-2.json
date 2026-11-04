@@ -1,0 +1,18 @@
+{
+  "source": "scripted for the demo, not a recorded model answer",
+  "model": "gemini-3.8-flash",
+  "usage": {
+    "input_tokens": 2210,
+    "output_tokens": 428
+  },
+  "output": {
+    "hypothesis": "The percent has no valid range: anything below 0 inflates the price and anything above 100 makes it negative. Clamp it to 0..100.",
+    "test_code": "from pricing import apply_discount\n\n\ndef test_negative_percent_never_raises_the_price():\n    assert apply_discount(100, -10) == 100\n",
+    "edits": [
+      {
+        "path": "pricing.py",
+        "content": "\"\"\"Prices for the checkout.\"\"\"\n\n\ndef apply_discount(price: float, percent: float) -> float:\n    \"\"\"Return the price after a percentage discount.\"\"\"\n    percent = min(max(percent, 0), 100)\n    return round(price * (1 - percent / 100), 2)\n"
+      }
+    ]
+  }
+}

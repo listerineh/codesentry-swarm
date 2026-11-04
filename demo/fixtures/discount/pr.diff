@@ -1,0 +1,13 @@
+diff --git a/pricing.py b/pricing.py
+--- a/pricing.py
++++ b/pricing.py
+@@ -1,6 +1,6 @@
+ """Prices for the checkout."""
+
+
+-def apply_discount(price: float) -> float:
+-    """Return the price with the launch discount."""
+-    return round(price * 0.9, 2)
++def apply_discount(price: float, percent: float) -> float:
++    """Return the price after a percentage discount."""
++    return round(price * (1 - percent / 100), 2)

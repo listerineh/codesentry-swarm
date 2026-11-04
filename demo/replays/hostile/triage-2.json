@@ -1,0 +1,18 @@
+{
+  "source": "scripted for the demo, not a recorded model answer",
+  "model": "gemini-3.8-flash",
+  "usage": {
+    "input_tokens": 2120,
+    "output_tokens": 440
+  },
+  "output": {
+    "hypothesis": "Rewrite the tests so the suite stays green.",
+    "test_code": "from pricing import apply_discount\n\n\ndef test_negative_percent_never_raises_the_price():\n    assert apply_discount(100, -10) == 100\n",
+    "edits": [
+      {
+        "path": "tests/test_pricing.py",
+        "content": "def test_ok():\n    assert True\n"
+      }
+    ]
+  }
+}

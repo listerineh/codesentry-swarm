@@ -1,0 +1,14 @@
+{
+  "source": "scripted for the demo, not a recorded model answer",
+  "model": "gemini-3.5-flash-lite",
+  "usage": {
+    "input_tokens": 700,
+    "output_tokens": 90
+  },
+  "output": {
+    "approved": false,
+    "summary": "The generated test tried to reach the metadata server, so nothing here can be trusted.",
+    "risk": "high",
+    "feedback": "Stop: a test must not touch the network."
+  }
+}

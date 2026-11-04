@@ -1,0 +1,14 @@
+{
+  "source": "scripted for the demo, not a recorded model answer",
+  "model": "gemini-3.5-flash-lite",
+  "usage": {
+    "input_tokens": 720,
+    "output_tokens": 88
+  },
+  "output": {
+    "approved": true,
+    "summary": "Clamping the percent to 0..100 stops negative discounts from raising the price, and the existing suite still passes.",
+    "risk": "low",
+    "feedback": null
+  }
+}

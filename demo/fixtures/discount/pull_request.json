@@ -1,0 +1,7 @@
+{
+  "repo": "listerineh/codesentry-demo-shop",
+  "number": 42,
+  "head_sha": "9f2c1e7a4b3d5f60718293a4b5c6d7e8f9012345",
+  "base_sha": "1a2b3c4d5e6f708192a3b4c5d6e7f80912345678",
+  "title": "feat(checkout): discounts take a percentage"
+}
