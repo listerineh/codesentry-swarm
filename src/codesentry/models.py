@@ -102,6 +102,7 @@ class Iteration(BaseModel):
     number: int
     triage: Triage | None = None
     patch_diff: str = ""
+    traceparent: str | None = None  # where the sandbox's result rejoins the trace
     policy_violation: str | None = None
     report: SandboxReport | None = None
     gate_passed: bool = False

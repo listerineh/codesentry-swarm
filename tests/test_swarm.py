@@ -170,6 +170,25 @@ async def test_one_trace_follows_the_task_across_the_bus(runtime_for, pull_reque
     assert chat.attributes["gen_ai.usage.input_tokens"] == 1840
 
 
+async def test_the_trace_survives_a_sandbox_that_reports_later(runtime_for, pull_request):
+    runtime = runtime_for()
+    inner, pending = runtime.swarm.sandbox.execute, []
+
+    async def later(task_id, iteration, bundle):
+        pending.append((task_id, iteration, await inner(task_id, iteration, bundle)))
+
+    runtime.swarm.sandbox.execute = later
+    task = await run_to_end(runtime, pull_request)
+    while pending:
+        await runtime.swarm.complete_run(*pending.pop())  # called with no active span, like Eventarc
+        await runtime.swarm.bus.drain(runtime.swarm.handle)
+
+    assert (await runtime.swarm.store.get(task.id)).status is TaskStatus.COMPLETED
+    spans = runtime.memory_spans.spans
+    assert {format(span.context.trace_id, "032x") for span in spans} == {task.trace_id}
+    assert {"sandbox.result", "agent.judge"} <= {span.name for span in spans}
+
+
 def test_comments_keep_diff_headers_and_never_ping_anyone(pull_request):
     report = FinalReport(
         task_id="t",

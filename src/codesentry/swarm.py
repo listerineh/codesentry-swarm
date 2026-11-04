@@ -116,13 +116,22 @@ class Swarm:
         if not await self.store.claim(task.id, f"complete-{iteration}", CLAIM_LEASE_S):
             return
         current = task.iteration(iteration)
-        current.report = report
-        current.gate_passed, current.gate_reason = gate(report)
-        red = report.red
-        await self._event(task, "sandbox", f"before the fix: exit {red.exit_code}", iteration)
-        if report.green:
-            await self._event(task, "sandbox", f"with the fix: exit {report.green.exit_code}", iteration)
-        await self._next(task, Stage.JUDGE, iteration)
+        # Eventarc delivers this outside any trace, so the context saved before the sandbox started brings it back.
+        with self.tracer.start_as_current_span(
+            "sandbox.result",
+            context=context_from(current.traceparent),
+            kind=SpanKind.CONSUMER,
+            attributes={"codesentry.task_id": task.id, "codesentry.iteration": iteration},
+        ) as span:
+            current.report = report
+            current.gate_passed, current.gate_reason = gate(report)
+            span.set_attribute("codesentry.red_exit_code", report.red.exit_code)
+            span.set_attribute("codesentry.gate_passed", current.gate_passed)
+            await self._event(task, "sandbox", f"before the fix: exit {report.red.exit_code}", iteration)
+            if report.green:
+                span.set_attribute("codesentry.green_exit_code", report.green.exit_code)
+                await self._event(task, "sandbox", f"with the fix: exit {report.green.exit_code}", iteration)
+            await self._next(task, Stage.JUDGE, iteration)
 
     # ── Stages ──────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -159,21 +168,17 @@ class Swarm:
             return
 
         current.patch_diff = _diff(snapshot, triage)
-        await self.store.save(task)
-        with self.tracer.start_as_current_span("sandbox.execute", kind=SpanKind.CLIENT) as span:
+        with self.tracer.start_as_current_span("sandbox.execute", kind=SpanKind.CLIENT):
+            current.traceparent = current_traceparent()
+            await self.store.save(task)
             bundle = SandboxBundle(
                 files=snapshot.files,
                 test_path=TEST_PATH,
                 test_code=triage.test_code,
                 edits=triage.edits,
-                traceparent=current_traceparent(),
+                traceparent=current.traceparent,
             )
             report = await self.sandbox.execute(task.id, number, bundle)
-            if report:
-                span.set_attribute("codesentry.red_exit_code", report.red.exit_code)
-                span.set_attribute(
-                    "codesentry.green_exit_code", report.green.exit_code if report.green else -1
-                )
         if report:
             await self.complete_run(task.id, number, report)
 

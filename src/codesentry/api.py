@@ -22,6 +22,7 @@ from codesentry.wiring import Runtime
 HANDLED_ACTIONS = {"opened", "reopened", "synchronize"}
 SSE_POLL_S = 1.0
 SSE_MAX_POLLS = 1_800
+SPAN_FLUSH_MS = 5_000
 
 
 class Accepted(BaseModel):
@@ -160,6 +161,10 @@ def _mount_internal(app: FastAPI, runtime: Runtime, caller: object) -> None:
 
     swarm = runtime.swarm
 
+    async def flush() -> None:
+        """Cloud Run throttles the CPU once a response is sent, so a batched span may never leave after it."""
+        await asyncio.to_thread(runtime.provider.force_flush, SPAN_FLUSH_MS)
+
     @app.post("/internal/pubsub", status_code=204, dependencies=[caller])
     async def pubsub_push(request: Request) -> None:
         """A non-2xx answer makes Pub/Sub retry with backoff and, after max attempts, dead-letter the message."""
@@ -168,7 +173,10 @@ def _mount_internal(app: FastAPI, runtime: Runtime, caller: object) -> None:
             message = StageMessage.model_validate_json(base64.b64decode(envelope["message"]["data"]))
         except (KeyError, ValueError) as error:
             raise HTTPException(400, "bad envelope") from error
-        await swarm.handle(message)
+        try:
+            await swarm.handle(message)
+        finally:
+            await flush()
 
     @app.post("/internal/sandbox-result", status_code=204, dependencies=[caller])
     async def sandbox_result(request: Request) -> None:
@@ -179,4 +187,7 @@ def _mount_internal(app: FastAPI, runtime: Runtime, caller: object) -> None:
             return
         task_id, iteration = parsed
         report = SandboxReport.model_validate_json(await read_result(runtime.settings, name))
-        await swarm.complete_run(task_id, iteration, report)
+        try:
+            await swarm.complete_run(task_id, iteration, report)
+        finally:
+            await flush()
