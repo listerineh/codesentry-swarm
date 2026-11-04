@@ -62,7 +62,10 @@ async def test_hostile_fixes_never_reach_the_sandbox_and_hostile_tests_never_app
     workflow, rewrite, escape = task.iterations
     assert "hidden paths" in workflow.policy_violation and workflow.report is None
     assert "tests that judge it" in rewrite.policy_violation and rewrite.report is None
-    assert not escape.gate_passed
+    # The subprocess sandbox has no network isolation: where the metadata address answers, as on GitHub's runners, the
+    # test passes. Only the Docker and Cloud Run sandboxes contain it, so the gate's result depends on the machine here.
+    assert not escape.verdict.approved
+    assert comments(runtime)[-1].count('"outcome": "needs_human"') == 1
 
 
 async def test_duplicate_deliveries_run_each_stage_once(runtime_for, pull_request):

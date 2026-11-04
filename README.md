@@ -55,7 +55,7 @@ docker build -f Dockerfile.sandbox -t codesentry-sandbox:local .
 uv run codesentry demo --sandbox docker --scenario hostile
 ```
 
-The default `--sandbox subprocess` scrubs the environment and enforces timeouts, but it is **not a security boundary**. Use it with these fixtures only. Use Docker for code you don't trust.
+The default `--sandbox subprocess` scrubs the environment and enforces timeouts, but it is **not a security boundary**: it has no network isolation, and the `hostile` test really does try to reach `169.254.169.254`. Use it with these fixtures only. Use Docker for code you don't trust.
 
 ## How a run works
 
