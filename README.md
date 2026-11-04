@@ -105,7 +105,7 @@ uv sync --extra gcp
 CODESENTRY_PROJECT_ID=your-project uv run codesentry demo --llm gemini --sandbox docker --record demo/recorded
 ```
 
-Copy `demo/recorded/discount/*.json` over `demo/replays/discount/` and the offline demo replays real answers and token counts. A real model may get it right the first time, so you won't always see the intermediate red run.
+Copy `demo/recorded/discount/*.json` over `demo/replays/discount/` and the offline demo replays real answers and token counts. A real model sometimes gets it right the first time, so you won't always see the intermediate red run.
 
 ## Deploying to Google Cloud
 
@@ -133,7 +133,7 @@ Platform decisions and their sources are in [docs/verified-facts.md](docs/verifi
 ./scripts/open-demo-pr.sh
 ```
 
-Opens a fresh pull request on [codesentry-demo-shop](https://github.com/listerineh/codesentry-demo-shop); the swarm comments on it in about 2 to 3 minutes. `./scripts/demo-status.sh PROJECT_ID` shows comments, job runs and errors, and `./scripts/open-escape-pr.sh` probes the sandbox from the inside. To ship a new commit, use `./scripts/redeploy.sh PROJECT_ID`.
+Opens a fresh pull request on [codesentry-demo-shop](https://github.com/listerineh/codesentry-demo-shop); the swarm comments on it in 2 to 5 minutes. `./scripts/demo-status.sh PROJECT_ID` shows comments, job runs and errors, and `./scripts/open-escape-pr.sh` probes the sandbox from the inside. To ship a new commit, use `./scripts/redeploy.sh PROJECT_ID`.
 
 ## Limitations
 

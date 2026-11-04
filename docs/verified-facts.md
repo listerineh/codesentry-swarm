@@ -9,7 +9,8 @@ Proyecto `codesentry-swarm`, `us-central1`, con Gemini real y Cloud Run sandboxe
 - **PR de ejemplo:** [#2](https://github.com/listerineh/codesentry-demo-shop/pull/2) resuelto en 1 iteración y 2 min 22 s, con 5 tests pasando, 1529 tokens de entrada y 4001 de salida, 0,016 USD.
 - **Arranque en frío:** la primera ejecución del job tardó 1 min 32 s en iniciar. Lanza un PR antes de empezar la demo para no esperarlo en el escenario.
 - **Prueba de escape:** con `scripts/open-escape-pr.sh`, desde dentro del sandbox `169.254.169.254` y `metadata.google.internal` dieron `Network is unreachable`, internet no resolvió DNS, y no se vieron las URLs firmadas ni variables con credenciales.
-- **Modelo real:** acertó a la primera, así que el rojo intermedio del replay no siempre aparece en vivo.
+- **Tres PRs reales:** de 1 min 46 s a 4 min 22 s y de 0,011 a 0,016 USD. Dos acertaron a la primera y uno necesitó 2 iteraciones, así que el rojo intermedio no siempre aparece en vivo.
+- **Traza completa:** el [PR #5](https://github.com/listerineh/codesentry-demo-shop/pull/5) dejó 15 spans en una sola traza, desde `task.submit` hasta el último juez.
 
 Tropiezos del primer despliegue, ya corregidos en este repo:
 

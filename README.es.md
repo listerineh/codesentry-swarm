@@ -73,7 +73,7 @@ CODESENTRY_PROJECT_ID=tu-proyecto uv run codesentry demo --llm gemini --sandbox 
 3. Plan B, sin red: `uv run codesentry demo --sandbox docker`. Si grabaste en el paso 2, copia `demo/recorded/discount/*.json` sobre `demo/replays/discount/` y el respaldo tendrá respuestas y tokens reales.
 4. `--pace 1.5` da más tiempo para narrar cada evento.
 
-Un modelo real puede acertar a la primera, y entonces no verás el rojo intermedio. Graba hasta tener la corrida que quieres contar, o usa el replay.
+Un modelo real a veces acierta a la primera, y entonces no verás el rojo intermedio. Graba hasta tener la corrida que quieres contar, o usa el replay.
 
 ## El flujo con API y SSE
 
@@ -110,7 +110,7 @@ Todos viven en código y tienen tests:
 ./scripts/open-demo-pr.sh
 ```
 
-Abre un PR nuevo en [codesentry-demo-shop](https://github.com/listerineh/codesentry-demo-shop) y el enjambre comenta en unos 2 o 3 minutos. `./scripts/demo-status.sh PROYECTO` muestra comentarios, ejecuciones y errores, y `./scripts/open-escape-pr.sh` prueba el sandbox desde dentro. Para publicar un commit nuevo usa `./scripts/redeploy.sh PROYECTO`.
+Abre un PR nuevo en [codesentry-demo-shop](https://github.com/listerineh/codesentry-demo-shop) y el enjambre comenta en 2 a 5 minutos. `./scripts/demo-status.sh PROYECTO` muestra comentarios, ejecuciones y errores, y `./scripts/open-escape-pr.sh` prueba el sandbox desde dentro. Para publicar un commit nuevo usa `./scripts/redeploy.sh PROYECTO`.
 
 ## Limitaciones
 
