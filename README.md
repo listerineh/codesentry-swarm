@@ -74,6 +74,7 @@ All of them live in code and have tests:
 - **Limits:** 3 iterations, a token budget per task, a hard timeout per call, a circuit breaker and a fallback to the light model.
 - **Idempotency:** each stage is claimed once, so duplicate webhooks and messages don't repeat work.
 - **Retries:** backoff and dead letters, on Pub/Sub and on the local bus.
+- **Forks are ignored:** a pull request only runs if its branch lives in the same repository, so a stranger can't spend your budget.
 - **Humans merge:** it comments on the pull request and never pushes.
 
 ## API and progress over SSE

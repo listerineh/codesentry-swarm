@@ -38,6 +38,13 @@ def valid_signature(secret: str, body: bytes, header: str | None) -> bool:
     return hmac.compare_digest(expected, header)
 
 
+def same_repository(payload: dict) -> bool:
+    """A pull request from a fork would spend our budget and run a stranger's code, so only branches of the repo count."""
+    head_repo = ((payload.get("pull_request") or {}).get("head") or {}).get("repo") or {}
+    base_repo = payload.get("repository") or {}
+    return bool(head_repo.get("full_name")) and head_repo["full_name"] == base_repo.get("full_name")
+
+
 def pull_request_from(payload: dict) -> PullRequestRef:
     pull_request = payload["pull_request"]
     return PullRequestRef(
@@ -93,6 +100,8 @@ def create_app(runtime: Runtime) -> FastAPI:
             return {"status": "ignored"}
         payload = json.loads(body)
         if payload.get("action") not in HANDLED_ACTIONS:
+            return {"status": "ignored"}
+        if not same_repository(payload):
             return {"status": "ignored"}
         try:
             pull_request = pull_request_from(payload)

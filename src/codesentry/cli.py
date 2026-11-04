@@ -138,7 +138,10 @@ def webhook(args: argparse.Namespace) -> int:
             "pull_request": {
                 "number": pull_request.number,
                 "title": pull_request.title,
-                "head": {"sha": f"{pull_request.head_sha[:-8]}{int(time.time()):08x}"},
+                "head": {
+                    "sha": f"{pull_request.head_sha[:-8]}{int(time.time()):08x}",
+                    "repo": {"full_name": pull_request.repo},
+                },
                 "base": {"sha": pull_request.base_sha},
             },
         }

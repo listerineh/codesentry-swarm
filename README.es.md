@@ -101,6 +101,7 @@ Todos viven en código y tienen tests:
 - **Presupuesto de tokens por tarea**, circuit breaker, timeout duro por llamada y fallback al modelo ligero.
 - **Idempotencia:** el `task_id` sale del commit y cada etapa se reclama una sola vez, así que los webhooks y mensajes duplicados no repiten trabajo.
 - **Reintentos con backoff y dead letter**, en Pub/Sub y en el bus local.
+- **Forks ignorados:** un PR solo corre si su rama vive en el mismo repositorio, para que un desconocido no gaste tu presupuesto.
 - **Sin escritura automática:** comenta en el PR, nunca hace push. El merge es humano.
 
 ## Demo en vivo sobre lo desplegado

@@ -16,6 +16,9 @@ gcloud services enable artifactregistry.googleapis.com cloudbuild.googleapis.com
 gcloud artifacts repositories describe codesentry --location "$region" --project "$project" >/dev/null 2>&1 ||
   gcloud artifacts repositories create codesentry --repository-format docker --location "$region" --project "$project"
 
+gcloud artifacts repositories set-cleanup-policies codesentry --location "$region" --project "$project" \
+  --policy infra/artifact-cleanup.json --no-dry-run >/dev/null
+
 gcloud storage buckets describe "gs://${state_bucket}" >/dev/null 2>&1 ||
   gcloud storage buckets create "gs://${state_bucket}" --project "$project" --location "$region" \
     --uniform-bucket-level-access --public-access-prevention

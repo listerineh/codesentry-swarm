@@ -18,7 +18,7 @@ class Settings(BaseSettings):
 
     # Guardrails
     max_iterations: int = 3
-    max_tokens_per_task: int = 60_000
+    max_tokens_per_task: int = 20_000
     llm_timeout_s: float = 45
     sandbox_timeout_s: float = 60
     breaker_threshold: int = 3

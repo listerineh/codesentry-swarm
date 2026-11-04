@@ -16,12 +16,20 @@ from codesentry.wiring import build_runtime
 SECRET = "test-secret"
 
 
-def payload(action: str = "opened") -> bytes:
+REPO = "listerineh/codesentry-demo-shop"
+
+
+def payload(action: str = "opened", head_repo: str | None = REPO) -> bytes:
     return json.dumps(
         {
             "action": action,
-            "repository": {"full_name": "listerineh/codesentry-demo-shop"},
-            "pull_request": {"number": 42, "title": "t", "head": {"sha": "abc"}, "base": {"sha": "def"}},
+            "repository": {"full_name": REPO},
+            "pull_request": {
+                "number": 42,
+                "title": "t",
+                "head": {"sha": "abc", "repo": {"full_name": head_repo} if head_repo else None},
+                "base": {"sha": "def"},
+            },
         }
     ).encode()
 
@@ -86,8 +94,22 @@ async def test_other_events_are_ignored(client, event, action):
     assert response.json() == {"status": "ignored"}
 
 
+@pytest.mark.parametrize("head_repo", ["stranger/codesentry-demo-shop", None])
+async def test_pull_requests_from_forks_are_ignored(client, runtime, head_repo):
+    body = payload(head_repo=head_repo)
+    response = await client.post("/webhooks/github", content=body, headers=headers(body))
+    assert response.json() == {"status": "ignored"}
+    assert runtime.swarm.bus.queue.empty()
+
+
 async def test_malformed_payloads_get_a_422(client):
-    body = json.dumps({"action": "opened"}).encode()
+    body = json.dumps(
+        {
+            "action": "opened",
+            "repository": {"full_name": REPO},
+            "pull_request": {"head": {"repo": {"full_name": REPO}}},
+        }
+    ).encode()
     response = await client.post("/webhooks/github", content=body, headers=headers(body))
     assert response.status_code == 422
 
