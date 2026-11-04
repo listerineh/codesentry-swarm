@@ -4,6 +4,6 @@ output "webhook_url" {
 }
 
 output "sandbox_job" {
-  description = "Enable sandboxes on it after the first apply: gcloud beta run jobs update <job> --sandbox-launcher"
+  description = "Enable sandboxes on it after the first apply: scripts/enable-sandbox.py"
   value       = google_cloud_run_v2_job.sandbox.name
 }

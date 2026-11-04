@@ -15,6 +15,9 @@ locals {
 
 data "google_project" "this" {}
 
+# Reading this also creates the agent, which a new project doesn't have until first use.
+data "google_storage_project_service_account" "gcs" {}
+
 resource "google_project_service" "apis" {
   for_each           = local.apis
   service            = each.value
@@ -159,7 +162,6 @@ resource "google_pubsub_subscription" "stage" {
 # Pub/Sub moves messages to the dead letter topic with its own service agent.
 locals {
   pubsub_agent = "serviceAccount:service-${data.google_project.this.number}@gcp-sa-pubsub.iam.gserviceaccount.com"
-  gcs_agent    = "serviceAccount:service-${data.google_project.this.number}@gs-project-accounts.iam.gserviceaccount.com"
 }
 
 resource "google_pubsub_topic_iam_member" "dead_letter_publisher" {
@@ -178,7 +180,7 @@ resource "google_pubsub_subscription_iam_member" "dead_letter_subscriber" {
 resource "google_project_iam_member" "gcs_publishes_events" {
   project = var.project_id
   role    = "roles/pubsub.publisher"
-  member  = local.gcs_agent
+  member  = data.google_storage_project_service_account.gcs.member
 }
 
 resource "google_project_iam_member" "pusher_receives_events" {

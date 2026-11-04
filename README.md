@@ -121,7 +121,7 @@ terraform -chdir=infra plan -out=tfplan -var project_id=YOUR_PROJECT -var api_im
 Review the plan with `tflint` and `trivy` before applying it. Then:
 
 1. Add versions to the `codesentry-webhook-secret`, `codesentry-api-token` and `codesentry-github-token` secrets.
-2. Enable sandboxes on the job: `gcloud beta run jobs update codesentry-sandbox --sandbox-launcher`.
+2. Enable sandboxes on the job: `gcloud auth print-access-token | scripts/enable-sandbox.py YOUR_PROJECT`.
 3. Add the `webhook_url` output to your test repository's webhooks.
 
 Platform decisions and their sources are in [docs/verified-facts.md](docs/verified-facts.md). That page is dated: Google Cloud names, models and limits change quickly.

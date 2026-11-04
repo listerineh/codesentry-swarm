@@ -127,7 +127,7 @@ terraform -chdir=infra plan -out=tfplan -var project_id=TU_PROYECTO -var api_ima
 Revisa el plan con `tflint` y `trivy` antes de aplicarlo. Luego:
 
 1. Crea las versiones de los secretos `codesentry-webhook-secret`, `codesentry-api-token` y `codesentry-github-token`.
-2. Activa los sandboxes en el job con `gcloud beta run jobs update codesentry-sandbox --sandbox-launcher`.
+2. Activa los sandboxes en el job con `gcloud auth print-access-token | scripts/enable-sandbox.py TU_PROYECTO`.
 3. Pega la salida `webhook_url` en los webhooks del repositorio de prueba.
 
 Las fuentes de cada decisión de plataforma están en [docs/verified-facts.md](docs/verified-facts.md).
