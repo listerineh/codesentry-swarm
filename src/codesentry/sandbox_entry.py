@@ -33,7 +33,8 @@ def write_tree(root: Path, files: dict[str, str]) -> None:
 
 
 def clip(text: str) -> str:
-    return text if len(text) <= OUTPUT_LIMIT else f"{text[:OUTPUT_LIMIT]}\n… truncated"
+    # The end is what matters: pytest prints the assertion and the summary last.
+    return text if len(text) <= OUTPUT_LIMIT else f"… truncated\n{text[-OUTPUT_LIMIT:]}"
 
 
 def count_tests(report: Path) -> int:

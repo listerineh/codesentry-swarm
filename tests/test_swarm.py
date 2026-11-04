@@ -7,9 +7,9 @@ from conftest import comments, run_to_end, settings_for
 
 from codesentry.adapters.local import MemoryBus
 from codesentry.guardrails import LlmContractError
-from codesentry.models import PullSnapshot, Stage, StageMessage, TaskStatus, Verdict
+from codesentry.models import FinalReport, PullSnapshot, Stage, StageMessage, TaskStatus, Verdict
 from codesentry.ports import LlmResponse
-from codesentry.prompts import summarize_functions, triage_prompt
+from codesentry.prompts import render_comment, summarize_functions, triage_prompt
 from codesentry.swarm import task_id_for
 
 
@@ -168,6 +168,30 @@ async def test_one_trace_follows_the_task_across_the_bus(runtime_for, pull_reque
     assert "sandbox.execute" in names and "agent.judge" in names
     chat = next(span for span in spans if span.name.startswith("chat "))
     assert chat.attributes["gen_ai.usage.input_tokens"] == 1840
+
+
+def test_comments_keep_diff_headers_and_never_ping_anyone(pull_request):
+    report = FinalReport(
+        task_id="t",
+        repo="a/b",
+        pull_request=1,
+        head_sha="h",
+        outcome="fix_proposed",
+        iterations=1,
+        hypothesis=None,
+        summary="thanks @everyone",
+        risk="low",
+        exit_code=0,
+        tests_run=1,
+        input_tokens=1,
+        output_tokens=1,
+        cost_usd=0.0,
+        trace_id=None,
+    )
+    body = render_comment(report, "@@ -1 +1 @@\n-a\n+b\n~~~~\n@admin")
+    assert "@@ -1 +1 @@" in body
+    assert body.splitlines()[2] == "thanks @\u200beveryone"  # the only line outside a code block
+    assert body.count("~~~~") == 4
 
 
 def test_prompts_fence_pull_request_text(pull_request):

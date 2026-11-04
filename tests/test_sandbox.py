@@ -5,7 +5,7 @@ import pytest
 from codesentry.adapters.local import DockerSandbox, SubprocessSandbox
 from codesentry.guardrails import gate
 from codesentry.models import FileEdit, SandboxBundle
-from codesentry.sandbox_entry import safe_path
+from codesentry.sandbox_entry import clip, safe_path
 
 SOURCE = "def add(a, b):\n    return a - b\n"
 FIXED = "def add(a, b):\n    return a + b\n"
@@ -67,6 +67,10 @@ async def test_a_pull_request_cannot_set_pytest_options():
     hostile.files["pytest.ini"] = "[pytest]\naddopts = --no-such-flag\n"
     report = await SubprocessSandbox(30).execute("t", 1, hostile)
     assert report.red.exit_code == 1
+
+
+def test_long_output_keeps_its_end():
+    assert clip("a" * 20_000 + "assert 1 == 2").endswith("assert 1 == 2")
 
 
 @pytest.mark.parametrize("path", ["../evil.py", "/tmp/evil.py"])

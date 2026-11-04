@@ -95,14 +95,19 @@ def judge_prompt(iteration: Iteration) -> str:
 
 
 def _neutralize(text: str) -> str:
-    """Model text must not ping people or close our fences."""
-    return text.replace("@", "@​").replace("~~~~", "~ ~ ~ ~")
+    """Model text must not ping people outside a code block."""
+    return text.replace("@", "@\u200b")
+
+
+def _fence_safe(text: str) -> str:
+    """Model text must not close our fences. Inside them GitHub links nobody, and a diff keeps its @@ headers."""
+    return text.replace("~~~~", "~ ~ ~ ~")
 
 
 def render_comment(report: FinalReport, patch_diff: str) -> str:
     title = "Fix proposed" if report.outcome == "fix_proposed" else "Needs a human"
     lines = [f"### CodeSentry Swarm: {title}", "", _neutralize(report.summary), ""]
     if patch_diff:
-        lines += ["~~~~diff", _neutralize(patch_diff).rstrip(), "~~~~", ""]
-    lines += ["~~~~json", _neutralize(report.model_dump_json(indent=2)), "~~~~"]
+        lines += ["~~~~diff", _fence_safe(patch_diff).rstrip(), "~~~~", ""]
+    lines += ["~~~~json", _fence_safe(report.model_dump_json(indent=2)), "~~~~"]
     return "\n".join(lines)

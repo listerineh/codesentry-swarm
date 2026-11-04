@@ -112,8 +112,6 @@ Todos viven en código y tienen tests:
 
 ## Google Cloud
 
-**El código de `adapters/gcp.py` y `infra/` no se ha ejecutado contra un proyecto real.** Solo tiene tests con dobles. Falta confirmar en un despliegue real que `sandbox do` acepta `stdin` y las banderas de `job_main.py`.
-
 Nada aquí crea recursos solo. Para desplegar:
 
 ```bash
