@@ -59,5 +59,6 @@ ignore = ["S101", "E501"]  # ruff format owns line length
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S"]
 "demo/*" = ["S"]
+"scripts/*" = ["S"]
 "src/codesentry/sandbox_entry.py" = ["S"]
 "src/codesentry/job_main.py" = ["S"]

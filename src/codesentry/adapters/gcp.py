@@ -157,11 +157,10 @@ class CloudRunJobSandbox:
     """
 
     def __init__(self, settings: Settings) -> None:
-        from google.cloud import run_v2, storage
+        from google.cloud import storage
 
         self._settings = settings
         self._storage = storage.Client(project=settings.project_id)
-        self._jobs = run_v2.JobsAsyncClient()
 
     def _signed_url(self, blob: Any, method: str) -> str:
         import google.auth
@@ -189,9 +188,10 @@ class CloudRunJobSandbox:
         from google.cloud import run_v2
 
         bundle_url, result_url = await asyncio.to_thread(self._prepare, task_id, iteration, bundle)
-        name = self._jobs.job_path(
-            self._settings.project_id, self._settings.job_region, self._settings.job_name
-        )
+        # Created here, not in __init__: an async gRPC client belongs to the event loop that creates it, and adapters
+        # are built at import time, before uvicorn's loop exists.
+        jobs = run_v2.JobsAsyncClient()
+        name = jobs.job_path(self._settings.project_id, self._settings.job_region, self._settings.job_name)
         overrides = run_v2.RunJobRequest.Overrides(
             container_overrides=[
                 run_v2.RunJobRequest.Overrides.ContainerOverride(
@@ -202,7 +202,7 @@ class CloudRunJobSandbox:
                 )
             ]
         )
-        await self._jobs.run_job(request=run_v2.RunJobRequest(name=name, overrides=overrides))
+        await jobs.run_job(request=run_v2.RunJobRequest(name=name, overrides=overrides))
 
 
 def result_object(task_id: str, iteration: int) -> str:
