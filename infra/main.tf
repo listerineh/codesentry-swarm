@@ -4,6 +4,7 @@ locals {
     "aiplatform.googleapis.com",
     "eventarc.googleapis.com",
     "firestore.googleapis.com",
+    "monitoring.googleapis.com",
     "pubsub.googleapis.com",
     "run.googleapis.com",
     "secretmanager.googleapis.com",
@@ -318,4 +319,11 @@ resource "google_cloud_run_v2_job_iam_member" "api_runs_sandbox" {
   location = var.region
   role     = "roles/run.developer"
   member   = google_service_account.api.member
+}
+
+# ── Observability ────────────────────────────────────────────────────────────────
+
+resource "google_monitoring_dashboard" "swarm" {
+  dashboard_json = file("${path.module}/dashboard.json")
+  depends_on     = [google_project_service.apis]
 }

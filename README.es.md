@@ -110,7 +110,7 @@ Todos viven en código y tienen tests:
 ./scripts/open-demo-pr.sh
 ```
 
-Abre un PR nuevo en [codesentry-demo-shop](https://github.com/listerineh/codesentry-demo-shop) y el enjambre comenta en 2 a 5 minutos. `./scripts/demo-status.sh PROYECTO` muestra comentarios, ejecuciones y errores, y `./scripts/open-escape-pr.sh` prueba el sandbox desde dentro. Para publicar un commit nuevo usa `./scripts/redeploy.sh PROYECTO`.
+Abre un PR nuevo en [codesentry-demo-shop](https://github.com/listerineh/codesentry-demo-shop) y el enjambre comenta en 2 a 5 minutos. `./scripts/demo-status.sh PROYECTO` muestra comentarios, ejecuciones y errores, `./scripts/open-escape-pr.sh` prueba el sandbox desde dentro y `./scripts/open-injection-pr.sh` esconde instrucciones para el revisor en el código. Para publicar un commit nuevo usa `./scripts/redeploy.sh PROYECTO`.
 
 ## Limitaciones
 
