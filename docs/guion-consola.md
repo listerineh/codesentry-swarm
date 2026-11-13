@@ -7,15 +7,27 @@
 Ejecuta estos pasos unos 15 minutos antes de empezar.
 
 1. Abre todas las pestañas de la tabla de abajo y comprueba que la sesión de Google sigue activa.
-2. Lanza un PR para calentar el job. El primer arranque tardó 1 min 32 s:
+2. Si el dashboard está vacío, llénalo unos 30 minutos antes. Abre un PR por cada bug de `demo/shop-prs` y los relanza en 3 rondas, unas 21 tareas por menos de 0,30 USD:
+
+```bash
+./scripts/traffic.sh 3 300 20
+```
+
+3. Lanza un PR para calentar el job. El primer arranque tardó 1 min 32 s:
 
 ```bash
 ./scripts/open-demo-pr.sh
 ```
 
-3. Cuando comente, anota su `task_id` y `trace_id` en la libreta, no en pantalla.
-4. Abre [Recent Deliveries](https://github.com/listerineh/codesentry-demo-shop/settings/hooks) del webhook en otra pestaña.
-5. Haz un ensayo de red: si la consola va lenta, usa las capturas de respaldo.
+4. Comprueba que cada gráfica tiene datos. "Sent to dead letter" vacía es buena señal, y las ejecuciones del job tardan unos minutos en aparecer:
+
+```bash
+gcloud auth print-access-token | ./scripts/check-dashboard.py codesentry-swarm
+```
+
+5. Cuando comente, anota su `task_id` y `trace_id` en la libreta, no en pantalla.
+6. Abre [Recent Deliveries](https://github.com/listerineh/codesentry-demo-shop/settings/hooks) del webhook en otra pestaña.
+7. Haz un ensayo de red: si la consola va lenta, usa las capturas de respaldo.
 
 ## Pestañas, en orden
 
@@ -45,6 +57,14 @@ Quedan a mano, por si preguntan: [cuentas de servicio](https://console.cloud.goo
 7. **Eventarc.** Un archivo nuevo en el bucket llama a `/internal/sandbox-result`. El job no conoce al juez.
 8. **Trace.** Pega el `trace_id` y sigue los spans. Abre `chat gemini-*` para ver `gen_ai.usage.*`. Cuenta que Pub/Sub crea una traza por mensaje y Eventarc llega sin contexto, así que `traceparent` viaja a mano y se guarda antes del sandbox.
 9. **Dashboard.** Tokens, llamadas, latencia, colas y dead letters. Es el salto de "un PR" a "operar un sistema".
+
+## El momento en vivo
+
+```bash
+./scripts/live-demo.sh
+```
+
+Abre un PR nuevo con el bug de los puntos de lealtad y sigue la tarea por SSE en la terminal: webhook, hipótesis, sandbox y comentario. Termina con tokens, costo, tiempo y los enlaces a Cloud Trace y Firestore. En el ensayo del 13 de noviembre tardó 111 s y costó 0,0026 USD. Para otro bug, pasa su carpeta: `./scripts/live-demo.sh tax`.
 
 ## Tres momentos para el escenario
 
