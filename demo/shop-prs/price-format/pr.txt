@@ -1,0 +1,2 @@
+feat(ui): format prices for the storefront
+Prices show a dollar sign and thousands separators.

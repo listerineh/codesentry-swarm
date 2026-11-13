@@ -1,0 +1,2 @@
+feat(catalog): paginate the product list
+The catalog shows 10 products per page.

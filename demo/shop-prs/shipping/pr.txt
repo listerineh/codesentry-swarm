@@ -1,0 +1,2 @@
+feat(checkout): free shipping from 50 dollars
+Orders of 50 dollars or more ship for free.

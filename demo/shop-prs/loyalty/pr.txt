@@ -1,0 +1,2 @@
+feat(loyalty): points for every purchase
+Customers earn one point per full dollar spent.

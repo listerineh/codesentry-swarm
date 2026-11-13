@@ -1,0 +1,2 @@
+feat(cart): totals for multi-item carts
+Adds cart_total for the checkout summary.

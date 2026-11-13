@@ -1,0 +1,2 @@
+feat(inventory): reserve stock when an order is placed
+Placing an order now takes units out of stock.

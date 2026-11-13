@@ -1,0 +1,2 @@
+feat(checkout): add 15% VAT to the total
+Totals now include VAT, rounded to cents.
