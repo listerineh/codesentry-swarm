@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Fills the dashboard: opens one pull request per bug in demo/shop-prs, then re-triggers each one every round with an
-# empty commit (a new head commit is a new task). loyalty is left out: it's the live demo's.
+# empty commit (a new head commit is a new task). loyalty is the live demo's, and age-check ends with a human on purpose.
 # Usage: scripts/traffic.sh [ROUNDS] [SECONDS_BETWEEN_ROUNDS] [SECONDS_BETWEEN_PRS]
 set -euo pipefail
 
@@ -19,7 +19,7 @@ branches=()
 
 for dir in "$here"/demo/shop-prs/*/; do
   name="$(basename "$dir")"
-  [[ "$name" == "loyalty" ]] && continue
+  [[ "$name" == "loyalty" || "$name" == "age-check" ]] && continue
   branch="suite-${name}-${stamp}"
   title="$(sed -n 1p "$dir/pr.txt")"
   body="$(sed -n 2p "$dir/pr.txt")"
