@@ -17,8 +17,13 @@ api="$(gcloud run services describe codesentry-api --project "$project" --region
 CODESENTRY_API_TOKEN="$(gcloud secrets versions access latest --secret codesentry-api-token --project "$project")"
 export CODESENTRY_API_TOKEN
 
-# Wakes the API so GitHub's webhook doesn't hit a cold start.
-python3 -c "import urllib.request; urllib.request.urlopen('$api/healthz', timeout=30)"
+# Wakes the API so GitHub's webhook doesn't hit a cold start. Any answer will do: Cloud Run reserves paths ending in z,
+# so /healthz never reaches the app, and / answers 404 from the app itself.
+python3 -c "import urllib.request
+try:
+    urllib.request.urlopen('$api/', timeout=30)
+except Exception:
+    pass"
 
 git clone -q "git@github.com:${repo}.git" "$work"
 cd "$work"
